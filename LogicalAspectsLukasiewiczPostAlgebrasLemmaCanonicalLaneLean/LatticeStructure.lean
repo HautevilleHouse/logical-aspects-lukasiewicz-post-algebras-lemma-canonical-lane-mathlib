@@ -3,30 +3,47 @@ import canonicalLaneMathlib.AdmissibleClass
 namespace HautevilleHouse
 namespace LogicalAspectsLukasiewiczPostAlgebrasLemmaCanonicalLaneLean
 
-structure LukasiewiczLatticePackage where
+structure LukasiewiczPostLatticePackage where
   carrier : Type u
   join : carrier → carrier → carrier
   meet : carrier → carrier → carrier
-  bounded : Prop
-  distributive : Prop
-  boundedTerm : bounded
-  distributiveTerm : distributive
+  top : carrier
+  bottom : carrier
+  joinAssoc : ∀ x y z : carrier, join (join x y) z = join x (join y z)
+  meetAssoc : ∀ x y z : carrier, meet (meet x y) z = meet x (meet y z)
+  joinComm : ∀ x y : carrier, join x y = join y x
+  meetComm : ∀ x y : carrier, meet x y = meet y x
+  absorptionJoinMeet : ∀ x y : carrier, join x (meet x y) = x
+  absorptionMeetJoin : ∀ x y : carrier, meet x (join x y) = x
+  topJoin : ∀ x : carrier, join x top = top
+  bottomMeet : ∀ x : carrier, meet x bottom = bottom
+  distributivity : Prop
 
-structure PostLatticePackage (L : LukasiewiczLatticePackage) where
-  chainCondition : Prop
-  finiteHeight : Prop
-  chainConditionTerm : chainCondition
-  finiteHeightTerm : finiteHeight
+structure LatticeEvidence (L : LukasiewiczPostLatticePackage) where
+  joinAssocClosed : L.joinAssoc
+  meetAssocClosed : L.meetAssoc
+  joinCommClosed : L.joinComm
+  meetCommClosed : L.meetComm
+  absorptionJoinMeetClosed : L.absorptionJoinMeet
+  absorptionMeetJoinClosed : L.absorptionMeetJoin
+  topJoinClosed : L.topJoin
+  bottomMeetClosed : L.bottomMeet
+  distributivityClosed : L.distributivity
 
-structure LatticeEvidence (L : LukasiewiczLatticePackage) where
-  boundedClosed : L.bounded
-  distributiveClosed : L.distributive
+def LatticeClosed (L : LukasiewiczPostLatticePackage) : Prop :=
+  L.joinAssoc ∧ L.meetAssoc ∧ L.joinComm ∧ L.meetComm ∧
+  L.absorptionJoinMeet ∧ L.absorptionMeetJoin ∧ L.topJoin ∧ L.bottomMeet ∧ L.distributivity
 
-def LatticeClosed (L : LukasiewiczLatticePackage) : Prop :=
-  L.bounded ∧ L.distributive
-
-theorem lattice_closed_from_evidence (L : LukasiewiczLatticePackage) (E : LatticeEvidence L) : LatticeClosed L := by
-  exact And.intro E.boundedClosed E.distributiveClosed
+theorem lattice_closed_from_evidence (L : LukasiewiczPostLatticePackage)
+    (E : LatticeEvidence L) : LatticeClosed L := by
+  exact And.intro E.joinAssocClosed
+    (And.intro E.meetAssocClosed
+      (And.intro E.joinCommClosed
+        (And.intro E.meetCommClosed
+          (And.intro E.absorptionJoinMeetClosed
+            (And.intro E.absorptionMeetJoinClosed
+              (And.intro E.topJoinClosed
+                (And.intro E.bottomMeetClosed E.distributivityClosed)))))))
 
 end LogicalAspectsLukasiewiczPostAlgebrasLemmaCanonicalLaneLean
 end HautevilleHouse
