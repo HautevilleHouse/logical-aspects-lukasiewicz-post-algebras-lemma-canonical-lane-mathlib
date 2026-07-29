@@ -1,26 +1,24 @@
 import canonicalLaneMathlib.AdmissibleClass
+import HautevilleHouse.LogicalAspectsLukasiewiczPostAlgebrasLemmaCanonicalLaneLean.RepresentationTheorem
 
 namespace HautevilleHouse
 namespace LogicalAspectsLukasiewiczPostAlgebrasLemmaCanonicalLaneLean
 
-structure CompletenessLemma (L : LukasiewiczAlgebra) (P : PostAlgebra L) where
-  representation : LatticeRepresentation L
-  semantics : Type u
-  valuation : semantics → L.carrier → Prop
-  valuationExtensional : ∀ (v : semantics) (a b : L.carrier), (∀ x : representation.representation, true) → valuation v a = valuation v b
-  completenessStatement : ∀ (a : L.carrier), (∀ v : semantics, valuation v a) → a = L.one
-  soundness : ∀ (a : L.carrier), a = L.one → (∀ v : semantics, valuation v a)
+structure CompletenessPackage (L : LukasiewiczLatticePackage) (M : MVAlgebraPackage L) (P : PostAlgebraPackage L M) (R : RepresentationPackage L M P) where
+  completenessStatement : Prop
+  soundnessStatement : Prop
+  completenessStatementTerm : completenessStatement
+  soundnessStatementTerm : soundnessStatement
 
-structure CompletenessLemmaEvidence (L : LukasiewiczAlgebra) (P : PostAlgebra L) (C : CompletenessLemma L P) where
-  completenessStatementClosed : C.completenessStatement
-  soundnessClosed : C.soundness
+structure CompletenessEvidence (L : LukasiewiczLatticePackage) (M : MVAlgebraPackage L) (P : PostAlgebraPackage L M) (R : RepresentationPackage L M P) (C : CompletenessPackage L M P R) where
+  completenessClosed : C.completenessStatement
+  soundnessClosed : C.soundnessStatement
 
-def CompletenessLemmaClosed (L : LukasiewiczAlgebra) (P : PostAlgebra L) (C : CompletenessLemma L P) : Prop :=
-  C.completenessStatement ∧ C.soundness
+def CompletenessClosed (L : LukasiewiczLatticePackage) (M : MVAlgebraPackage L) (P : PostAlgebraPackage L M) (R : RepresentationPackage L M P) (C : CompletenessPackage L M P R) : Prop :=
+  C.completenessStatement ∧ C.soundnessStatement
 
-theorem completeness_lemma_closed_from_evidence (L : LukasiewiczAlgebra) (P : PostAlgebra L) (C : CompletenessLemma L P) (E : CompletenessLemmaEvidence L P C) :
-    CompletenessLemmaClosed L P C := by
-  exact And.intro E.completenessStatementClosed E.soundnessClosed
+theorem completeness_closed_from_evidence (L : LukasiewiczLatticePackage) (M : MVAlgebraPackage L) (P : PostAlgebraPackage L M) (R : RepresentationPackage L M P) (C : CompletenessPackage L M P R) (E : CompletenessEvidence L M P R C) : CompletenessClosed L M P R C := by
+  exact And.intro E.completenessClosed E.soundnessClosed
 
 end LogicalAspectsLukasiewiczPostAlgebrasLemmaCanonicalLaneLean
 end HautevilleHouse
